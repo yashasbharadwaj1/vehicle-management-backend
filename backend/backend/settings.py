@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     "api",
     "userauths",
     "vendor",
+    "customer",
+    "agent",
     "rest_framework",
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
