@@ -1,0 +1,3 @@
+vehicle/
+db.sqlite3/
+.env
