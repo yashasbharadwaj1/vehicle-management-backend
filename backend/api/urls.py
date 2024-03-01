@@ -1,6 +1,7 @@
 app_name = 'api'
 from django.urls import path 
-from userauths import views as userauth_views 
+from userauths import views as userauth_views
+from customer import views as customer_views 
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
@@ -10,5 +11,8 @@ urlpatterns = [
     path('user/login/', userauth_views.LoginView.as_view(), name='token_obtain_pair'),
     path('user/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('user/logout/',userauth_views.LogoutView.as_view(), name='logout_user'),
+    
+    #Customer 
+    path('list/vendors/',customer_views.ListVendors.as_view(),)
 ]
 

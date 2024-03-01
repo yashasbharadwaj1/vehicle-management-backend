@@ -1,9 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from shortuuidfield import ShortUUIDField 
 
 class User(AbstractUser):
-    user_id = ShortUUIDField(unique=True,max_length=4) 
     email = models.EmailField(unique=True)
     type_of_user = models.CharField(max_length=20, choices=[
         ("customer", "Customer"),

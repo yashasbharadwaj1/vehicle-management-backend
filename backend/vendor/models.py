@@ -1,11 +1,9 @@
 from django.db import models
 from userauths.models import User
-from shortuuidfield import ShortUUIDField
 from backend.storage_backends import PublicMediaStorage
 
 
 class Vendor(models.Model):
-    vendor_id = ShortUUIDField(unique=True)
     name = models.CharField(max_length=100)
     details = models.CharField(max_length=200, default="details", blank=True)
 
@@ -17,7 +15,6 @@ class Vendor(models.Model):
 class Vehicle(models.Model):
     name = models.CharField(max_length=100)
     number = models.CharField(default="KAO4KD8347", max_length=10)
-    product_id = ShortUUIDField(unique=True)
     product_image = models.FileField(
         storage=PublicMediaStorage(), upload_to="product", default="default.jpg"
     )
@@ -37,7 +34,6 @@ class Vehicle(models.Model):
 
 
 class Order(models.Model):
-    order_id = ShortUUIDField(unique=True)
     vendor_id = models.ForeignKey(Vendor, on_delete=models.CASCADE)
     product_id = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
