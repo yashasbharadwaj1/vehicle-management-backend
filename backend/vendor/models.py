@@ -16,7 +16,7 @@ class Vehicle(models.Model):
     name = models.CharField(max_length=100)
     number = models.CharField(default="KAO4KD8347", max_length=10)
     product_image = models.FileField(
-        storage=PublicMediaStorage(), upload_to="product", default="default.jpg"
+        storage=PublicMediaStorage(), upload_to="product", default="product/default.jpg"
     )
     price = models.FloatField()
     qa_assured = models.BooleanField(default=False)

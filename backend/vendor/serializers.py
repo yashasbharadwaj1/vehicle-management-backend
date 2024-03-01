@@ -1,7 +1,12 @@
 from rest_framework import serializers
-from .models import Vendor
+from .models import *
 
 class VendorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vendor
+        fields = '__all__'
+
+class VehicleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vehicle
         fields = '__all__'
