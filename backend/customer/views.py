@@ -2,15 +2,14 @@ from rest_framework import views
 from rest_framework.permissions import IsAuthenticated
 from vendor.models import *
 from rest_framework.response import Response
-from vendor.serializers import (
-    VendorSerializer,
-    VehicleSerializer,
-    CreateOrderSerializer,
-)
+from vendor.serializers import *
 from rest_framework import status
 from django.db.models import Max
 from datetime import datetime
 import json
+from userauths.models import User
+from django.db.models import Q 
+from django.db.models import F
 
 
 class ListVendors(views.APIView):
@@ -31,7 +30,8 @@ class ListVehiclesByVendor(views.APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, vendor_id):
-        vehicles = Vehicle.objects.filter(vendor_id=vendor_id)
+        
+        vehicles = Vehicle.objects.exclude(stock=0).filter(vendor_id=vendor_id)    
         serializer = VehicleSerializer(vehicles, many=True)
         vendor = Vendor.objects.get(id=vendor_id)
         for vehicle in serializer.data:
@@ -50,9 +50,10 @@ class CreateOrder(views.APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
+        
         data = request.data
         print(json.dumps(data, indent=4))
-
+        
         order_id = Order.objects.aggregate(Max("id"))["id__max"] or 0
         order_id = order_id + 1
 
@@ -70,8 +71,59 @@ class CreateOrder(views.APIView):
         print("data going to serializer")
         print(data)
         # Create the order
-        serializer = CreateOrderSerializer(data=data)
+        serializer = OrderSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            serializer.save() 
+            
+            order_data = serializer.data 
+            
+            vehicle_id = order_data["product_id"]
+            # reduce the stock number of Vehicle 
+            vehicle_obj = Vehicle.objects.get(id=vehicle_id) 
+            if vehicle_obj.stock == 0:
+                return Response({"msg": "Out of stock"}, status=status.HTTP_400_BAD_REQUEST)
+
+            vehicle_obj.stock = F('stock') - 1
+            vehicle_obj.save()
+            
+            return Response(order_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ListOrders(views.APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, customer_id):
+        final_data = []
+        
+        orders_objs = Order.objects.filter(user_id=customer_id)
+        orders_serializer = OrderSerializer(orders_objs, many=True)
+        orders_data = orders_serializer.data
+        
+        if orders_data:
+            for order_data in orders_data:
+                data = {}
+                vendor_id = order_data['vendor_id'] 
+                vehicle_id = order_data['product_id']
+                
+                vendor_obj = Vendor.objects.get(id=vendor_id)
+                vehicle_obj = Vehicle.objects.get(id=vehicle_id) 
+                
+                vehicle_serializer = VehicleSerializer(vehicle_obj) 
+                vendor_serializer = VendorSerializer(vendor_obj)
+                
+                vehicle_data = vehicle_serializer.data 
+                vendor_data = vendor_serializer.data
+                
+                data["order_data"] = order_data 
+                data["vehicle_data"] = vehicle_data
+                data["vendor_data"] = vendor_data
+                
+                final_data.append(data)
+
+            return Response(final_data, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {"msg": f"No orders found for Customer with id {customer_id}"},
+                status=status.HTTP_404_NOT_FOUND,
+            )

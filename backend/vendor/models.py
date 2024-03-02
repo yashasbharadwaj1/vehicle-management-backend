@@ -15,6 +15,7 @@ class Vendor(models.Model):
 class Vehicle(models.Model):
     name = models.CharField(max_length=100)
     number = models.CharField(default="KAO4KD8347", max_length=10)
+    stock = models.IntegerField(default=0)
     product_image = models.FileField(
         storage=PublicMediaStorage(), upload_to="product", default="product/default.jpg"
     )

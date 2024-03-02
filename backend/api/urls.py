@@ -16,6 +16,7 @@ urlpatterns = [
     path('customer/list/vendors/',customer_views.ListVendors.as_view()),
     path('customer/list/vehicles/<int:vendor_id>/', customer_views.ListVehiclesByVendor.as_view()),
     path('customer/create/order/', customer_views.CreateOrder.as_view()),
+    path('customer/list/orders/<int:customer_id>/', customer_views.ListOrders.as_view()),
 
 ]
 
