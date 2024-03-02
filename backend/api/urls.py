@@ -13,8 +13,9 @@ urlpatterns = [
     path('user/logout/',userauth_views.LogoutView.as_view(), name='logout_user'),
     
     #Customer 
-    path('list/vendors/',customer_views.ListVendors.as_view()),
-    path('list/vehicles/<int:vendor_id>/', customer_views.ListVehiclesByVendor.as_view()),
+    path('customer/list/vendors/',customer_views.ListVendors.as_view()),
+    path('customer/list/vehicles/<int:vendor_id>/', customer_views.ListVehiclesByVendor.as_view()),
+    path('customer/create/order/', customer_views.CreateOrder.as_view()),
 
 ]
 
