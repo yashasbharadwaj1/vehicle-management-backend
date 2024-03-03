@@ -13,6 +13,20 @@ class Vendor(models.Model):
 
 
 class Vehicle(models.Model):
+    TWO_WHEELER = '2W'
+    FOUR_WHEELER = '4W'
+    THREE_WHEELER = '3W'
+    VEHICLE_TYPE_CHOICES = [
+        (TWO_WHEELER, '2-wheeler'),
+        (FOUR_WHEELER, '4-wheeler'),
+        (THREE_WHEELER, '3-wheeler'),
+    ]
+
+    type = models.CharField(
+        max_length=2,
+        choices=VEHICLE_TYPE_CHOICES,
+        default=TWO_WHEELER,
+    )
     name = models.CharField(max_length=100)
     number = models.CharField(default="KAO4KD8347", max_length=10)
     stock = models.IntegerField(default=0)

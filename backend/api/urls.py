@@ -17,6 +17,14 @@ urlpatterns = [
     path('customer/list/vehicles/<int:vendor_id>/', customer_views.ListVehiclesByVendor.as_view()),
     path('customer/create/order/', customer_views.CreateOrder.as_view()),
     path('customer/list/orders/<int:customer_id>/', customer_views.ListOrders.as_view()),
+    path('customer/checkin/',customer_views.CheckinVehicle.as_view()),
+    
+    #Vendor 
+    
+    #QA Guy 
+    
+    
+    #Security Guy
 
 ]
 
