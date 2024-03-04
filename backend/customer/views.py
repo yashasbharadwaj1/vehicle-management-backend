@@ -146,9 +146,14 @@ class CheckinVehicle(views.APIView):
         purchase_order = data.get("purchaseOrder")
 
         try:
-            order_obj = Order.objects.get(purchase_order_number=purchase_order)
+            order_obj = Order.objects.get(purchase_order_number=purchase_order) 
+            order_id = order_obj.id
+            print(order_id,"order_id")
+            user_id = order_obj.user_id_id 
+            print(user_id,"user_id")
             vehicle_id = order_obj.product_id_id
-            print(vehicle_id, "vehicle id")
+            print(vehicle_id, "vehicle id") 
+            
             vehicle_obj = Vehicle.objects.get(id=vehicle_id)
             if vehicle_obj.number != vehicle_number:
                 return Response(
@@ -166,9 +171,14 @@ class CheckinVehicle(views.APIView):
                     status=status.HTTP_404_NOT_FOUND,
                 )
                 
-                
-            # when qa logins he should be able to see these 4 values and a  
-            return Response({})
+            order_life_cycle_queryset = OrderLifeCycle.objects.filter(order_id=order_id) 
+            if order_life_cycle_queryset.exists():
+                print(order_life_cycle_queryset)
+                return Response({"msg":"Checkin already done"}, status=status.HTTP_200_OK)
+            else:
+                obj = OrderLifeCycle.objects.create(order_id=order_obj,is_checkin_initiated=True)
+                obj.save()
+                return Response({"checkin initiated"}, status=status.HTTP_200_OK)
 
         except Order.DoesNotExist:
             return Response(

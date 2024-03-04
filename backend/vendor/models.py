@@ -28,20 +28,12 @@ class Vehicle(models.Model):
         default=TWO_WHEELER,
     )
     name = models.CharField(max_length=100)
-    number = models.CharField(default="KAO4KD8347", max_length=10)
+    number = models.CharField(default="KAO4KD8347", max_length=30)
     stock = models.IntegerField(default=0)
     product_image = models.FileField(
         storage=PublicMediaStorage(), upload_to="product", default="product/default.jpg"
     )
-    price = models.FloatField()
-    qa_assured = models.BooleanField(default=False)
-    security_assured = models.BooleanField(default=False)
-    qa_rejection_reason = models.CharField(
-        max_length=400, default="reason for qa guy to reject"
-    )
-    security_rejection_reason = models.CharField(
-        max_length=400, default="reason for security guy to reject"
-    )
+    price = models.FloatField() 
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -64,3 +56,17 @@ class Order(models.Model):
 
     class Meta:
         ordering = ["-date_of_booking"]
+
+class OrderLifeCycle(models.Model):
+    order_id =models.ForeignKey(Order,on_delete=models.CASCADE)
+    is_checkin_initiated = models.BooleanField(default=False)
+    qa_assured = models.BooleanField(default=False)
+    security_assured = models.BooleanField(default=False)
+    qa_rejection_reason = models.CharField(
+        max_length=400, default="reason for qa guy to reject"
+    )
+    security_rejection_reason = models.CharField(
+        max_length=400, default="reason for security guy to reject"
+    )
+    def __str__(self):
+        return f"{self.id} - {self.order_id}"
