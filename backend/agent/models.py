@@ -11,7 +11,8 @@ class QAGuy(models.Model):
 
 class QACheckIn(models.Model):
     qa_guy = models.ForeignKey(QAGuy,on_delete=models.CASCADE)
-    unique_checkin_id = models.CharField(max_length=100)
+    #  unique_checkin_id = f"{order_life_cylce_id}_{order_id}_{vehicle_id}_{user_id}_{qa_id}"
+    unique_checkin_id = models.CharField(max_length=100,unique=True)
     def __str__(self):
         return f"{self.unique_checkin_id}"
     
@@ -26,7 +27,8 @@ class SecurityGuy(models.Model):
 
 class SecurityCheckin(models.Model):
     security_guy = models.ForeignKey(SecurityGuy,on_delete=models.CASCADE)
-    unique_checkout_id = models.CharField(max_length=100)
+    #  unique_checkout_id = f"{order_life_cylce_id}_{order_id}_{vehicle_id}_{user_id}_{security_id}"
+    unique_checkout_id = models.CharField(max_length=100,unique=True)
     def __str__(self):
         return f"{self.unique_checkout_id}"
     

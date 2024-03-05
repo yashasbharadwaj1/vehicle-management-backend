@@ -194,7 +194,7 @@ class CheckinVehicle(views.APIView):
                     qa_obj = QAGuy.objects.get(vendor=vendor_id)
                     qa_id = qa_obj.id
                     print(qa_id,"qa_id")
-                    unique_checkin_id = f"{order_life_cylce_id}_{order_id}_{user_id}"
+                    unique_checkin_id = f"{order_life_cylce_id}_{order_id}_{vehicle_id}_{user_id}_{qa_id}"
                     qa_check_in_obj = QACheckIn.objects.create(
                         qa_guy=qa_obj, unique_checkin_id=unique_checkin_id
                     )
