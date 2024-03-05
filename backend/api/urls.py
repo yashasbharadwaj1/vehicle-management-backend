@@ -3,6 +3,7 @@ from django.urls import path
 from userauths import views as userauth_views
 from customer import views as customer_views 
 from vendor import views as vendor_views
+from agent import views as agent_views
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
@@ -26,7 +27,7 @@ urlpatterns = [
     
     
     #QA Guy 
-    
+    path('agent/qa/list/checkis/<int:qa_id>/',agent_views.ListCheckinItemsForQA.as_view()),
     
     #Security Guy
 

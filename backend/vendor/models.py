@@ -69,5 +69,6 @@ class OrderLifeCycle(models.Model):
     security_rejection_reason = models.CharField(
         max_length=400, default="Nothing"
     )
+    is_final_checkout_done = models.BooleanField(default=False)
     def __str__(self):
         return f"{self.id} - {self.order_id}"
