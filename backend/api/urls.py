@@ -2,6 +2,7 @@ app_name = 'api'
 from django.urls import path 
 from userauths import views as userauth_views
 from customer import views as customer_views 
+from vendor import views as vendor_views
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
@@ -20,6 +21,8 @@ urlpatterns = [
     path('customer/checkin/',customer_views.CheckinVehicle.as_view()),
     
     #Vendor 
+    path('vendor/assign/qa/',vendor_views.AssignQa.as_view()),
+    
     
     #QA Guy 
     

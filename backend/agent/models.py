@@ -2,6 +2,7 @@ from django.db import models
 from vendor.models import Vendor 
 
 class QAGuy(models.Model):
+    name = models.CharField(max_length=100,default='name')
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
     email = models.EmailField()
     pass_code = models.CharField(max_length=8,unique=True)
@@ -15,6 +16,7 @@ class QACheckIn(models.Model):
         return f"{self.unique_checkin_id}"
     
 class SecurityGuy(models.Model):
+    name = models.CharField(max_length=100,default='name')
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
     email = models.EmailField()
     pass_code = models.CharField(max_length=8,unique=True)
