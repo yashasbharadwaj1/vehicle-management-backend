@@ -176,7 +176,7 @@ class CheckinVehicle(views.APIView):
                 print(order_life_cycle_queryset)
                 return Response({"msg":"Checkin already done"}, status=status.HTTP_200_OK)
             else:
-                obj = OrderLifeCycle.objects.create(order_id=order_obj,is_checkin_initiated=True)
+                obj = OrderLifeCycle.objects.create(order_id=order_obj,is_checkin_initiated=True,user_id=user_id)
                 obj.save()
                 return Response({"checkin initiated"}, status=status.HTTP_200_OK)
 

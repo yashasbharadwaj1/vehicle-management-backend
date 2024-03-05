@@ -59,6 +59,7 @@ class Order(models.Model):
 
 class OrderLifeCycle(models.Model):
     order_id =models.ForeignKey(Order,on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     is_checkin_initiated = models.BooleanField(default=False)
     qa_assured = models.BooleanField(default=False)
     security_assured = models.BooleanField(default=False)
