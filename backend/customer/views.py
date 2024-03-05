@@ -218,3 +218,29 @@ class CheckinVehicle(views.APIView):
                 {"msg": "Please enter a valid purchase order number. "},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+class CheckinStatus(views.APIView):
+    permission_classes  =(IsAuthenticated),
+    
+    def get(self, request, customer_id):
+        print(customer_id,"customer_id")
+        try:
+            user_obj = User.objects.get(id=customer_id) 
+        except User.DoesNotExist:
+            return Response({"msg":f"User with {customer_id} does not exist"},status=status.HTTP_400_BAD_REQUEST)
+        
+        order_life_cycle_queryset = OrderLifeCycle.objects.filter(user_id=user_obj)
+        if order_life_cycle_queryset.exists():
+            serializer = OrderLifeCycleSerializer(order_life_cycle_queryset,many=True) 
+            order_life_cylce_data = serializer.data 
+            for data in order_life_cylce_data:
+                order_id = data["order_id"]
+                order_obj = Order.objects.get(id=order_id)
+                purchase_order_number = order_obj.purchase_order_number 
+                data['purchase_order_number'] = purchase_order_number
+                
+            return Response(order_life_cylce_data,status=status.HTTP_200_OK)
+        else:
+            return Response({"msg":f"No checkins available for user"},status=status.HTTP_200_OK)
+            
+        

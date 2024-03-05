@@ -15,3 +15,8 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = '__all__'
+
+class OrderLifeCycleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderLifeCycle 
+        fields = '__all__'

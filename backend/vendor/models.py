@@ -64,10 +64,10 @@ class OrderLifeCycle(models.Model):
     qa_assured = models.BooleanField(default=False)
     security_assured = models.BooleanField(default=False)
     qa_rejection_reason = models.CharField(
-        max_length=400, default="reason for qa guy to reject"
+        max_length=400, default="Nothing"
     )
     security_rejection_reason = models.CharField(
-        max_length=400, default="reason for security guy to reject"
+        max_length=400, default="Nothing"
     )
     def __str__(self):
         return f"{self.id} - {self.order_id}"

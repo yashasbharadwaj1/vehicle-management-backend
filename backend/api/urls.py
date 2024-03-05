@@ -19,6 +19,7 @@ urlpatterns = [
     path('customer/create/order/', customer_views.CreateOrder.as_view()),
     path('customer/list/orders/<int:customer_id>/', customer_views.ListOrders.as_view()),
     path('customer/checkin/',customer_views.CheckinVehicle.as_view()),
+    path('customer/checkins/info/<int:customer_id>/',customer_views.CheckinStatus.as_view()),
     
     #Vendor 
     path('vendor/assign/qa/',vendor_views.AssignQa.as_view()),
