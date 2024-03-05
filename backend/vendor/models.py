@@ -28,16 +28,16 @@ class Vehicle(models.Model):
         default=TWO_WHEELER,
     )
     name = models.CharField(max_length=100)
-    number = models.CharField(default="KAO4KD8347", max_length=30)
-    stock = models.IntegerField(default=0)
+    number = models.CharField(default="", max_length=30,unique=True)
     product_image = models.FileField(
         storage=PublicMediaStorage(), upload_to="product", default="product/default.jpg"
     )
     price = models.FloatField() 
-    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE) 
+    is_ordered = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.name
+        return self.number
 
 
 class Order(models.Model):

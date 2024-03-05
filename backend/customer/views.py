@@ -32,7 +32,7 @@ class ListVehiclesByVendor(views.APIView):
 
     def get(self, request, vendor_id):
 
-        vehicles = Vehicle.objects.exclude(stock=0).filter(vendor_id=vendor_id)
+        vehicles = Vehicle.objects.exclude(is_ordered=True).filter(vendor_id=vendor_id)
         serializer = VehicleSerializer(vehicles, many=True)
         vendor = Vendor.objects.get(id=vendor_id)
         for vehicle in serializer.data:
@@ -54,7 +54,16 @@ class CreateOrder(views.APIView):
 
         data = request.data
         print(json.dumps(data, indent=4))
-
+        product_id = data["product_id"]
+        try:
+            vehicle_obj = Vehicle.objects.get(id=product_id) 
+            is_ordered = vehicle_obj.is_ordered 
+            if is_ordered:
+                return Response({"msg":"Vehicle already ordered"},status=status.HTTP_200_OK)
+                
+        except Vehicle.DoesNotExist:
+            return Response({"msg":f"given vehicle id {product_id} does not exist"},status=status.HTTP_400_BAD_REQUEST)
+        
         order_id = Order.objects.aggregate(Max("id"))["id__max"] or 0
         order_id = order_id + 1
 
@@ -63,7 +72,8 @@ class CreateOrder(views.APIView):
         date_of_booking = data["date_of_booking"]
         delivery_date = data["delivery_date"]
 
-        purchase_order_number = f"{order_id}_{date_of_booking}"
+        purchase_order_number = f"{order_id}_{date_of_booking}" 
+                
         delivery_challan_number = f"{order_id}_{delivery_date}"
 
         data["purchase_order_number"] = purchase_order_number
@@ -79,14 +89,10 @@ class CreateOrder(views.APIView):
             order_data = serializer.data
 
             vehicle_id = order_data["product_id"]
-            # reduce the stock number of Vehicle
+            
             vehicle_obj = Vehicle.objects.get(id=vehicle_id)
-            if vehicle_obj.stock == 0:
-                return Response(
-                    {"msg": "Out of stock"}, status=status.HTTP_400_BAD_REQUEST
-                )
-
-            vehicle_obj.stock = F("stock") - 1
+            
+            vehicle_obj.is_ordered = True
             vehicle_obj.save()
 
             return Response(order_data, status=status.HTTP_201_CREATED)
