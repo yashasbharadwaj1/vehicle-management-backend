@@ -10,6 +10,7 @@ import json
 from userauths.models import User
 from django.db.models import Q
 from django.db.models import F
+from agent.models import *
 
 
 class ListVendors(views.APIView):
@@ -146,14 +147,17 @@ class CheckinVehicle(views.APIView):
         purchase_order = data.get("purchaseOrder")
 
         try:
-            order_obj = Order.objects.get(purchase_order_number=purchase_order) 
+            order_obj = Order.objects.get(purchase_order_number=purchase_order)
             order_id = order_obj.id
-            print(order_id,"order_id")
-            user_id = order_obj.user_id_id 
-            print(user_id,"user_id")
+            print(order_id, "order_id")
+            user_id = order_obj.user_id_id
+            print(user_id, "user_id")
+            user_obj = User.objects.get(id=user_id)
             vehicle_id = order_obj.product_id_id
-            print(vehicle_id, "vehicle id") 
-            
+            print(vehicle_id, "vehicle id")
+            vendor_id = order_obj.vendor_id_id
+            print(vendor_id, "vendor id")
+
             vehicle_obj = Vehicle.objects.get(id=vehicle_id)
             if vehicle_obj.number != vehicle_number:
                 return Response(
@@ -170,14 +174,43 @@ class CheckinVehicle(views.APIView):
                     {"msg": "Please enter a valid delivery challan number."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
-                
-            order_life_cycle_queryset = OrderLifeCycle.objects.filter(order_id=order_id) 
+
+            order_life_cycle_queryset = OrderLifeCycle.objects.filter(order_id=order_id)
             if order_life_cycle_queryset.exists():
                 print(order_life_cycle_queryset)
-                return Response({"msg":"Checkin already done"}, status=status.HTTP_200_OK)
+                return Response(
+                    {"msg": "Checkin already done"}, status=status.HTTP_200_OK
+                )
             else:
-                obj = OrderLifeCycle.objects.create(order_id=order_obj,is_checkin_initiated=True,user_id=user_id)
-                obj.save()
+                order_life_cycle_obj = OrderLifeCycle.objects.create(
+                    order_id=order_obj, is_checkin_initiated=True, user_id=user_obj
+                )
+                order_life_cycle_obj.save()
+                try:
+                    newly_created_order_life_cycle_obj = OrderLifeCycle.objects.get(
+                        order_id=order_obj, is_checkin_initiated=True, user_id=user_obj
+                    )
+                    order_life_cylce_id = newly_created_order_life_cycle_obj.id
+                    qa_obj = QAGuy.objects.get(vendor=vendor_id)
+                    qa_id = qa_obj.id
+                    print(qa_id,"qa_id")
+                    unique_checkin_id = f"{order_life_cylce_id}_{order_id}_{user_id}"
+                    qa_check_in_obj = QACheckIn.objects.create(
+                        qa_guy=qa_obj, unique_checkin_id=unique_checkin_id
+                    )
+                    qa_check_in_obj.save()
+                except QAGuy.DoesNotExist:
+                    return Response(
+                        {
+                            "msg": f"Vendor with id {vendor_id} has not yet assigned a qa guy hence checkout not initiated"
+                        },
+                        status=status.HTTP_200_OK,
+                    )
+                except OrderLifeCycle.DoesNotExist:
+                    return Response(
+                        {"msg": f"there is an issue with creating order life cycle"}
+                    )
+
                 return Response({"checkin initiated"}, status=status.HTTP_200_OK)
 
         except Order.DoesNotExist:
@@ -185,5 +218,3 @@ class CheckinVehicle(views.APIView):
                 {"msg": "Please enter a valid purchase order number. "},
                 status=status.HTTP_404_NOT_FOUND,
             )
-
-        

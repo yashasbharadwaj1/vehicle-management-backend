@@ -10,7 +10,7 @@ class QAGuy(models.Model):
         return f"{self.vendor} - {self.email}"
 
 class QACheckIn(models.Model):
-    qa_guy = models.ForeignKey(QAGuy,on_delete=models.PROTECT)
+    qa_guy = models.ForeignKey(QAGuy,on_delete=models.CASCADE)
     unique_checkin_id = models.CharField(max_length=100)
     def __str__(self):
         return f"{self.unique_checkin_id}"
@@ -25,7 +25,7 @@ class SecurityGuy(models.Model):
         return f"{self.vendor} - {self.email}" 
 
 class SecurityCheckin(models.Model):
-    security_guy = models.ForeignKey(SecurityGuy,on_delete=models.PROTECT)
+    security_guy = models.ForeignKey(SecurityGuy,on_delete=models.CASCADE)
     unique_checkout_id = models.CharField(max_length=100)
     def __str__(self):
         return f"{self.unique_checkout_id}"
